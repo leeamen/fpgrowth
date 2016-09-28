@@ -11,16 +11,13 @@ def ShowFpnodeList(fpnode_list):
 class FPNode:
 	def __init__(self):
 		self.item = 'null'
-		self.f = 0
+		self.frequency = 0
 		self.child_list = []
 		self.next_pointer = None
-	def SetItem(self, item):
-		self.item = item
-	def AddF(self,i):
-		self.f = self.f + i
+		self.father= None
 
 	def Print(self):
-		print '(%s:%d)'%(self.item, self.f)
+		print '(%s:%d)'%(self.item, self.frequency)
 		for fpnode in self.child_list:
 			fpnode.Print()
 
@@ -72,8 +69,9 @@ class FPTree:
 				if fpnode == None:
 					prefix_over = 1
 					fpnode = FPNode()
-					fpnode.SetItem(item)
-					fpnode.AddF(1)
+					fpnode.item = item
+					fpnode.frequency += 1
+					fpnode.father = now_head
 					now_head.child_list.append(fpnode)
 					now_head = fpnode
 					now_level = level
@@ -86,7 +84,7 @@ class FPTree:
 							break
 					if header == None:
 						print 'error!没找到header'
-						return
+						exit
 					if header.pointer.pointer_start == None:
 						header.pointer.pointer_start = fpnode
 						header.pointer.pointer_end = fpnode
@@ -98,7 +96,7 @@ class FPTree:
 					#找到节点继续搜索下一层
 					now_head = fpnode
 					now_level = level
-					now_head.AddF(1)
+					now_head.frequency += 1
 
 	#搜索item的fpnode
 	def SearchInList(self, item, fpnode_list):
@@ -124,6 +122,7 @@ class Header:
 	def __init__(self, item):
 		self.item = item
 		self.pointer = Pointer()
+		self.frequency = 0
 
 f_list = {'a':8, 'b':8, 'c':6, 'd':5, 'e':3}
 print f_list
@@ -150,7 +149,7 @@ def ShowHeaderTable(header_table):
 		print header.item
 		fpnode = header.pointer.pointer_start
 		while fpnode != None:
-			print '(%s:%d)'%(fpnode.item, fpnode.f)
+			print '(%s:%d)'%(fpnode.item, fpnode.frequency)
 			fpnode = fpnode.next_pointer
 
 ShowHeaderTable(header_table)
